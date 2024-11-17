@@ -22,8 +22,8 @@ var (
 )
 
 const (
-	endpoint = "localhost:2136" // Локальный GRPC эндпоинт
-	database = "/local"         // Путь до локальной базы данных
+	endpoint = "192.168.99.32:2136" // Локальный GRPC эндпоинт
+	database = "/local"             // Путь до локальной базы данных
 )
 
 func GetContext() *context.Context {
