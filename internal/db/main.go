@@ -4,6 +4,7 @@ import (
 	// общие импорты из стандартной библиотеки
 	"context"
 	"fmt"
+	"go_ydb_driver/internal/conf"
 	"log"
 	"sync"
 
@@ -22,8 +23,7 @@ var (
 )
 
 const (
-	endpoint = "192.168.99.32:2136" // Локальный GRPC эндпоинт
-	database = "/local"             // Путь до локальной базы данных
+	database = "/local" // Путь до локальной базы данных
 )
 
 func GetContext() *context.Context {
@@ -35,7 +35,7 @@ func GetYDBConnection() *ydb.Driver {
 	Once.Do(func() {
 		ctx_, cancel_ := context.WithCancel(context.Background())
 		fmt.Println("create context")
-		dsn := "grpc://" + endpoint + database
+		dsn := "grpc://" + conf.GetVar("ENDPOINT") + database
 
 		db, err := ydb.Open(ctx_, dsn, ydb.WithAnonymousCredentials())
 		if err != nil {
