@@ -13,14 +13,17 @@ func CreateTable(tableName string, fields []string) error {
 	ctx := *GetContext()
 
 	return conn.Table().Do(ctx, func(ctx context.Context, s table.Session) error {
-		columns := "`index` Uint64 NOT NULL PRIMARY KEY"
+		columns := "`index` Uint64"
 		for _, field := range fields {
-			columns += fmt.Sprintf(", `%s` Blob", field)
+			columns += fmt.Sprintf("    `%s` String,", field)
 		}
+		columns += "    PRIMARY_KEY (index)"
 
 		createTableQuery := fmt.Sprintf("CREATE TABLE `%s` (%s);", tableName, columns)
 
+		log.Println("---QUERY GENERATED---")
 		log.Println(createTableQuery)
+		log.Println("---END---")
 
 		return s.ExecuteSchemeQuery(ctx, createTableQuery)
 	})
