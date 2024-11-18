@@ -8,19 +8,24 @@ import (
 	"github.com/ydb-platform/ydb-go-sdk/v3/table"
 )
 
+func GenerateCreateQuery(tableName string, fields []string) string {
+	indexName := tableName + "_index"
+	columns := indexName + " Uint64,\n"
+	for _, field := range fields {
+		columns += fmt.Sprintf("    %s String,\n", field)
+	}
+	columns += "    PRIMARY KEY (" + indexName + ")\n"
+
+	return fmt.Sprintf("CREATE TABLE %s (%s);", tableName, columns)
+
+}
+
 func CreateTable(tableName string, fields []string) error {
 	conn := GetYDBConnection()
 	ctx := *GetContext()
 
 	return conn.Table().Do(ctx, func(ctx context.Context, s table.Session) error {
-		columns := "`index` Uint64"
-		for _, field := range fields {
-			columns += fmt.Sprintf("    `%s` String,", field)
-		}
-		columns += "    PRIMARY_KEY (index)"
-
-		createTableQuery := fmt.Sprintf("CREATE TABLE `%s` (%s);", tableName, columns)
-
+		createTableQuery := GenerateCreateQuery(tableName, fields)
 		log.Println("---QUERY GENERATED---")
 		log.Println(createTableQuery)
 		log.Println("---END---")
