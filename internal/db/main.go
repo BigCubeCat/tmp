@@ -22,10 +22,6 @@ var (
 	Once        sync.Once
 )
 
-const (
-	database = "/local" // Путь до локальной базы данных
-)
-
 func GetContext() *context.Context {
 	return Ctx
 }
@@ -35,7 +31,7 @@ func GetYDBConnection() *ydb.Driver {
 	Once.Do(func() {
 		ctx_, cancel_ := context.WithCancel(context.Background())
 		fmt.Println("create context")
-		dsn := "grpc://" + conf.GetVar("ENDPOINT") + database
+		dsn := "grpc://" + conf.GetVar("ENDPOINT") + conf.GetVar("DB")
 
 		db, err := ydb.Open(ctx_, dsn, ydb.WithAnonymousCredentials())
 		if err != nil {
