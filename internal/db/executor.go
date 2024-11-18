@@ -10,7 +10,16 @@ func Execute(query string) error {
 	ctx := *GetContext()
 
 	return conn.Table().Do(ctx, func(ctx context.Context, s table.Session) error {
-		return s.ExecuteSchemeQuery(ctx, query)
+		_, _, err := s.Execute(
+			ctx,
+			table.TxControl(
+				table.BeginTx(table.WithSerializableReadWrite()),
+				table.CommitTx(),
+			), // Управление транзакцией
+			query,
+			nil,
+		)
+		return err
 	})
 
 }
