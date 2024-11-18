@@ -5,6 +5,7 @@ import (
 	"go_ydb_driver/internal/conf"
 	"go_ydb_driver/internal/db"
 	"strconv"
+	"time"
 )
 
 func main() {
@@ -25,6 +26,7 @@ func main() {
 		panic(err)
 	}
 	tableIndex := tableName + "_index"
+	beginTime := time.Now().Unix()
 	for i := 0; i < size; i++ {
 		query := db.GenerateInsertQuery(tableName, tableIndex, i, field, values)
 		err = db.Execute(query)
@@ -33,4 +35,6 @@ func main() {
 			break
 		}
 	}
+	endTime := time.Now().Unix()
+	fmt.Println("Spent time = ", endTime-beginTime)
 }
