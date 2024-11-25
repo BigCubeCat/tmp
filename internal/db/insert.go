@@ -9,7 +9,11 @@ func GenerateInsertQuery(
 	fields []string,
 	values []string,
 ) string {
-	q := "INSERT INTO " + tableName + "(\n"
+	q := ""
+	for _, field := range fields {
+		q += "DECLARE $" + field + " AS String;\n"
+	}
+	q += "INSERT INTO " + tableName + "(\n"
 	q += id_name + ",\n"
 	size := len(fields)
 	end := size - 1

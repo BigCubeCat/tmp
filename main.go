@@ -15,6 +15,7 @@ func main() {
 	fmt.Println("--CREATE QUERY--")
 	fmt.Println(db.GenerateCreateQuery(tableName, field))
 	fmt.Println("--END--")
+	fmt.Println(db.GenerateInsertQuery(tableName, "table_index", 1, field, values))
 	size, err := strconv.Atoi(conf.GetVar("COUNT"))
 	if err != nil {
 		fmt.Println("no count insrertions")
