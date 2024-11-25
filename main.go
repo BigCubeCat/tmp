@@ -12,8 +12,8 @@ import (
 )
 
 func main() {
-	field := []string{"name", "surname"}
-	values := []string{"egor", "bit"}
+	field := []string{"name"}
+	values := []string{"egor"}
 	tableName := "test_table"
 	tableIndex := tableName + "_index"
 	query := db.GenerateInsertQuery(tableName, tableIndex, field)
