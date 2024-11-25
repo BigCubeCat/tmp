@@ -7,7 +7,10 @@ func GenerateInsertQuery(
 ) string {
 	indexName := tableName + "_index"
 	q := "DECLARE $" + indexName + " AS Uint64;\n"
-	valuesString := "($" + indexName + ", "
+	valuesString := "($" + indexName
+	if len(fields) > 0 {
+		q += ", "
+	}
 	end := len(fields) - 1
 	for i, field := range fields {
 		q += "DECLARE $" + field + " AS String;\n"
