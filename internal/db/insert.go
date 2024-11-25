@@ -1,18 +1,17 @@
 package db
 
-import "strconv"
-
 func GenerateInsertQuery(
 	tableName string,
 	id_name string,
-	id int,
 	fields []string,
-	values []string,
 ) string {
 	q := ""
+	valuesString := "("
 	for _, field := range fields {
 		q += "DECLARE $" + field + " AS String;\n"
+		valuesString += "$" + field + ", "
 	}
+	valuesString += ")"
 	q += "INSERT INTO " + tableName + "(\n"
 	q += id_name + ",\n"
 	size := len(fields)
@@ -23,13 +22,7 @@ func GenerateInsertQuery(
 			q += ","
 		}
 	}
-	q += ")\nVALUES\n(" + strconv.Itoa(id) + ","
-	for i, value := range values {
-		q += "\"" + value + "\""
-		if i != end {
-			q += ","
-		}
-	}
+	q += ")\nVALUES\n" + valuesString
 	q += ");"
 	return q
 }

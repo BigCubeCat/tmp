@@ -6,6 +6,9 @@ import (
 	"go_ydb_driver/internal/db"
 	"strconv"
 	"time"
+
+	"github.com/ydb-platform/ydb-go-sdk/v3/table"
+	"github.com/ydb-platform/ydb-go-sdk/v3/table/types"
 )
 
 func main() {
@@ -15,7 +18,7 @@ func main() {
 	fmt.Println("--CREATE QUERY--")
 	fmt.Println(db.GenerateCreateQuery(tableName, field))
 	fmt.Println("--END--")
-	fmt.Println(db.GenerateInsertQuery(tableName, "table_index", 1, field, values))
+	fmt.Println(db.GenerateInsertQuery(tableName, "table_index", field))
 	size, err := strconv.Atoi(conf.GetVar("COUNT"))
 	if err != nil {
 		fmt.Println("no count insrertions")
@@ -28,9 +31,13 @@ func main() {
 	}
 	tableIndex := tableName + "_index"
 	beginTime := time.Now().Unix()
+	query := db.GenerateInsertQuery(tableName, tableIndex, field)
 	for i := 0; i < size; i++ {
-		query := db.GenerateInsertQuery(tableName, tableIndex, i, field, values)
-		err = db.Execute(query)
+		valuesArray := make([]table.ParameterOption, len(values))
+		for j := 0; j < len(values); j++ {
+			valuesArray[j] = table.ValueParam("$"+field[j], types.TextValue(values[i]))
+		}
+		err = db.ExecuteWithParams(query, table.NewQueryParameters(valuesArray...))
 		if err != nil {
 			fmt.Println("test " + strconv.Itoa(i) + " failed with error: " + err.Error())
 			break
