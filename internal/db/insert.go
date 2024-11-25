@@ -20,8 +20,10 @@ func GenerateInsertQuery(
 		}
 	}
 	valuesString += ")"
-	q += "INSERT INTO " + tableName + "(\n"
-	q += id_name + ",\n"
+	q += "INSERT INTO " + tableName + "(\n" + id_name
+	if len(fields) > 0 {
+		q += ", \n"
+	}
 	size := len(fields)
 	end = size - 1
 	for i, field := range fields {
