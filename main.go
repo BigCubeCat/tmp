@@ -34,6 +34,7 @@ func main() {
 		valuesArray := make([]table.ParameterOption, len(values)+1)
 		valuesArray[0] = table.ValueParam("$"+tableIndex, types.Uint64Value(i))
 		for j := 0; j < len(values); j++ {
+			fmt.Println("$"+field[j], values[j])
 			valuesArray[j+1] = table.ValueParam("$"+field[j], types.TextValue(values[j]))
 		}
 		err = db.ExecuteWithParams(query, table.NewQueryParameters(valuesArray...))
