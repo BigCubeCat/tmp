@@ -25,10 +25,6 @@ func main() {
 		panic(err)
 	}
 
-	err = db.CreateTable(tableName, field)
-	if err != nil {
-		panic(err)
-	}
 	beginTime := time.Now().Unix()
 	for i := uint64(0); i < uint64(size); i++ {
 		valuesArray := make([]table.ParameterOption, len(values)+1)
