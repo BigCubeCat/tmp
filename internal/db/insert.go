@@ -5,8 +5,9 @@ func GenerateInsertQuery(
 	id_name string,
 	fields []string,
 ) string {
-	q := ""
-	valuesString := "("
+	indexName := tableName + "_index"
+	q := "DECLARE $" + indexName + " AS Uint64;\n"
+	valuesString := "($" + indexName + ", "
 	end := len(fields) - 1
 	for i, field := range fields {
 		q += "DECLARE $" + field + " AS String;\n"
@@ -26,7 +27,6 @@ func GenerateInsertQuery(
 			q += ","
 		}
 	}
-	q += ")\nVALUES\n" + valuesString
-	q += ");"
+	q += ")\nVALUES\n" + valuesString + ";"
 	return q
 }

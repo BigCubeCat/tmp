@@ -14,11 +14,11 @@ import (
 func main() {
 	field := []string{"name", "surname", "lastname"}
 	values := []string{"egor", "bit", "ivan"}
-	tableName := conf.GetVar("table")
-	fmt.Println("--CREATE QUERY--")
-	fmt.Println(db.GenerateCreateQuery(tableName, field))
-	fmt.Println("--END--")
-	fmt.Println(db.GenerateInsertQuery(tableName, "table_index", field))
+	tableName := "test_table"
+	tableIndex := tableName + "_index"
+	query := db.GenerateInsertQuery(tableName, tableIndex, field)
+	fmt.Println(query)
+
 	size, err := strconv.Atoi(conf.GetVar("COUNT"))
 	if err != nil {
 		fmt.Println("no count insrertions")
@@ -29,17 +29,16 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	tableIndex := tableName + "_index"
 	beginTime := time.Now().Unix()
-	query := db.GenerateInsertQuery(tableName, tableIndex, field)
-	for i := 0; i < size; i++ {
-		valuesArray := make([]table.ParameterOption, len(values))
+	for i := uint64(0); i < uint64(size); i++ {
+		valuesArray := make([]table.ParameterOption, len(values)+1)
+		valuesArray[0] = table.ValueParam("$"+tableIndex, types.Uint64Value(i))
 		for j := 0; j < len(values); j++ {
-			valuesArray[j] = table.ValueParam("$"+field[j], types.TextValue(values[i]))
+			valuesArray[j+1] = table.ValueParam("$"+field[j], types.TextValue(values[j]))
 		}
 		err = db.ExecuteWithParams(query, table.NewQueryParameters(valuesArray...))
 		if err != nil {
-			fmt.Println("test " + strconv.Itoa(i) + " failed with error: " + err.Error())
+			fmt.Println("test " + strconv.Itoa(int(i)) + " failed with error: " + err.Error())
 			break
 		}
 	}
